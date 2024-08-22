@@ -1,0 +1,34 @@
+{
+    "categories": [
+        {
+            "name":"Knowledge",
+            "percent":20
+        },
+        {
+            "name":"Communication",
+            "percent":10
+        },
+        {
+            "name":"Application",
+            "percent":20
+        },
+        {
+            "name":"Thinking",
+            "percent":20
+        },
+        {
+            "name":"Final30",
+            "percent":30
+        }
+    ],
+    "data": [
+        {
+            "raw":[100,2,0]
+        },
+        {
+            "raw":[95,2,1]
+        }
+    ]
+
+}
+

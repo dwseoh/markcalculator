@@ -1,13 +1,48 @@
-import math
+import json
 
-'''
+
 data = []
 categories = {
     
 }
-'''
 
-data = [[100,2,0],[95,2,1]]
+
+def importJson():
+    global data,categories
+
+    f = open('data.json')
+    dataImported = json.load(f)
+    for dataset in dataImported['categories']:
+        categories[dataset['name']] = dataset['percent']
+
+    for dataset in dataImported['data']:
+        data.append(dataset['raw'])
+
+    print(dataImported)
+    dataImported = {"name":"John"}
+    print(dataImported)
+
+    f.close()
+
+def updateJson():
+    categories_list = [{"name": key, "percent": value} for key, value in categories.items()]
+    data_list = [{"raw": item} for item in data]
+    custom_dict = {
+        "categories": categories_list,
+        "data": data_list
+    }
+
+    file_path = 'data.json'
+    with open(file_path, 'w') as json_file:
+        json.dump(custom_dict, json_file, indent=4)
+
+    print(f"JSON file '{file_path}' has been successfully overwritten.")
+    
+
+
+importJson()
+
+'''data = [[100,2,0],[95,2,1]]
 categories = {
     "Knowledge": 20,
     "Communication":10,
@@ -15,9 +50,26 @@ categories = {
     "Thinking":20,
     "Final30":30
 }
+'''
+
+def resetData():
+    global categories,data
+    userInput = input("\nAre you sure you want to delete your data?\nType YES (case sensitive) to confirm. Any other input will stop this request.\nInput: ")
+    if userInput == 'YES':
+        categories = {}
+        data = []
+        print("Request successful.\n")
+        categorySetup()
+    else:
+        print("Request stopped.\n")
+
 
 
 def calculateMark():
+    global categories,data
+    if len(data) == 0:
+        return [],'-1'
+
     category_marks = []
     for k,v in categories.items():
         category_marks.append([0.0,0.0,0.0,v,k])
@@ -42,14 +94,19 @@ def calculateMark():
 
 
 def printMarkReport(raw,mark):
-    print(f"\nMARK REPORT\nFinal Mark: {mark:.2f}%\nCategory Breakdown:")
-    for data in raw: 
-        if data[1] != 0:
-            print(f" - {data[4]:<15} ( {data[3]:<3}% )  -  {data[2]:<3.2f} %")
-        else:
-            print(f" - {data[4]:<15} ( {data[3]:<3}% )  -  N/A (no entry)")
+    
+    if raw != []:
+        print(f"\nMARK REPORT\nFinal Mark: {mark:.2f}%\nCategory Breakdown:")
+        for data in raw: 
+            if data[1] != 0:
+                print(f" - {data[4]:<15} ( {data[3]:<3}% )  -  {data[2]:<3.2f} %")
+            else:
+                print(f" - {data[4]:<15} ( {data[3]:<3}% )  -  N/A (no entry)")
+    else:
+        print("\nNO ENTRIES\n")
 
 def addEntry():
+    global categories,data
     print("\nADD ENTRY\n")
     mark = 999
     while not (0<= mark <=100):
@@ -91,6 +148,7 @@ def addEntry():
     
 
 def printCategories():
+    global categories,data
     print("\nCATEGORIES:")
     c = 1
     for k,v in categories.items():
@@ -98,6 +156,7 @@ def printCategories():
         c+= 1
 
 def removeEntry():
+    global categories,data
     print("\nREMOVE ENTRY\n")
     print("Available Entries:\n")
     c = 1
@@ -125,9 +184,8 @@ def removeEntry():
 
 
 
-
-
-if not categories:
+def categorySetup():
+    global categories,data
     print('CATEGORY SETUP\nExample: "Knowledge": 20, "Communication":10, "Application":20, "Thinking":20,"Final30":30\n')
     sum = 0
     while sum != 100:
@@ -149,19 +207,25 @@ if not categories:
 
     print("Setup successful!")
 
+
+
+if not categories:
+    categorySetup()
+
 userInput = ""
 
 #add an option to edit categories later
 
 while userInput != "Exit":
-    userInput = input("What do you want to do?\n\n1 - Add an entry\n2 - Remove an entry\n3 - Reset all data\n4 - Mark report\n5 - View Categories\n6 - Import Data\n7 - Expoprt Data\nInput: ")
+    updateJson()
+    userInput = input("What do you want to do?\n\n1 - Add an entry\n2 - Remove an entry\n3 - Reset all data\n4 - Mark report\n5 - View Categories\n6 - Quick Import\n7 - Quick Export\nInput: ")
     
     if userInput == '1':
         addEntry()
     elif userInput == '2':
         removeEntry()
     elif userInput == '3':
-        pass
+        resetData()
     elif userInput == '4':
         a,b=calculateMark()
         printMarkReport(a,b)

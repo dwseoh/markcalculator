@@ -6,6 +6,12 @@ categories = {
     
 }
 
+#backup
+def backup():
+    with open("data.json", "r") as a, open("backup.json", "w") as b:
+        b.write(a.read())
+
+backup()
 
 def importJson():
     global data,categories
@@ -36,7 +42,6 @@ def updateJson():
     with open(file_path, 'w') as json_file:
         json.dump(custom_dict, json_file, indent=4)
 
-    print(f"JSON file '{file_path}' has been successfully overwritten.")
     
 
 
@@ -59,6 +64,7 @@ def resetData():
         categories = {}
         data = []
         print("Request successful.\n")
+        updateJson()
         categorySetup()
     else:
         print("Request stopped.\n")
@@ -218,7 +224,7 @@ userInput = ""
 
 while userInput != "Exit":
     updateJson()
-    userInput = input("What do you want to do?\n\n1 - Add an entry\n2 - Remove an entry\n3 - Reset all data\n4 - Mark report\n5 - View Categories\n6 - Quick Import\n7 - Quick Export\nInput: ")
+    userInput = input("What do you want to do?\n\n1 - Add an entry\n2 - Remove an entry\n3 - Reset all data\n4 - Mark report\n5 - View categories\nInput: ")
     
     if userInput == '1':
         addEntry()
@@ -233,10 +239,6 @@ while userInput != "Exit":
     elif userInput == '5':
         printCategories()
     
-    elif userInput == '6':
-        pass
-    elif userInput == '7':
-        pass
     else:
         print("Wrong input. Please try again\n")
     
